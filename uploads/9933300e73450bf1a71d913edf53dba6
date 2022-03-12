@@ -1,0 +1,25 @@
+from airbus_python import AirbusProducer
+from airbus_python import EventEntry
+import requests
+import sys
+import json
+
+# {"lotId": 593180, "styleId": 4456526}
+
+def on_success(msg):
+    print('Message delivered to {} [{}]'.format(msg.topic(), msg.partition()))
+
+def on_failure(err, msg):
+    print('Message delivery failed: {}'.format(err))
+
+app_name = 'catalog'
+service_url = 'http://platformairbus.stage.myntra.com/'
+airbusProducer = AirbusProducer(app_name=app_name,
+                                                service_url=service_url,
+                                                on_success_callback=on_success,
+                                                on_failure_callback=on_failure)
+HEADERS = {'Content-Type': 'application/json','Accept':'application/json','Authorization':'Basic WVhCcFlXUnRhVzQ2YlRGOnVkSEpoVWpCamEyVjBNVE1oSXc9PQ=='}
+
+event = EventEntry(app_name='catalog', event_name='micoo_tag_error_update_event', data="payload -> hellos")
+airbusProducer.send_message(event)
+airbusProducer.shutdown_producer()

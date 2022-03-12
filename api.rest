@@ -1,0 +1,54 @@
+POST http://localhost:5000/users
+Content-Type: application/json
+
+{
+    "firstname":"owea" , 
+    "lastname":"mantis" , 
+    "email":"oila@gmail.com" ,
+     "phone":996879 ,
+      "address":"TN" ,
+       "city":"Erode",
+       "password":"12345",
+       "pincode":3344444,
+       "cart":["iceCream"],
+       "ordered":[]
+}
+###
+
+POST http://localhost:5000/products
+Content-Type: application/json
+
+{
+       "product_name":"vw7",
+       "no_of_stars":4,
+       "no_of_review":12,
+       "editors_notes":"checking the notes",
+       "good_to_know":"good product",
+       "is_available": true,
+       "care_instruction":"be careful",
+       "rate":1020,
+       "rate2":2020,
+       "category": "car"
+}
+###
+
+GET http://localhost:5000/users
+Content-Type: application/json
+###
+
+
+
+GET http://localhost:5000/login
+Content-Type: application/json
+###
+GET http://localhost:5000/products
+Content-Type: application/json
+
+###
+
+GET http://localhost:5000/productsCategory
+Content-Type: application/json
+
+{
+       "category":"car"
+}
