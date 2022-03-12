@@ -9,7 +9,6 @@ require("dotenv").config();
 import jwt from "jsonwebtoken";
 const Pool = require("pg").Pool;
 
-
 const pool = new Pool({
   user: "postgres",
   host: "localhost",
@@ -39,7 +38,7 @@ const getAllUsers = (request, response) => {
   });
 };
 
-const token= (req, res) => {
+const token = (req, res) => {
   const refreshToken = req.body.token;
   if (refreshToken == null) return res.sendStatus(401);
   if (!refreshTokens.includes(refreshToken)) return res.sendStatus(403);
@@ -76,9 +75,13 @@ const login = (request, response) => {
             expiresIn: "15s",
           }
         );
-        const refreshToken = jwt.sign({ userId, name, email }, "lkfh46546546lghkg", {
-          expiresIn: "1d",
-        });
+        const refreshToken = jwt.sign(
+          { userId, name, email },
+          "lkfh46546546lghkg",
+          {
+            expiresIn: "1d",
+          }
+        );
         // await Users.update(
         //   { refresh_token: refreshToken },
         //   {
@@ -278,5 +281,7 @@ module.exports = {
   deleteProducts,
   createCategory,
   createPromoCode,
-  login,token,logOut
+  login,
+  token,
+  logOut,
 };

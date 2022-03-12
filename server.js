@@ -17,7 +17,7 @@ app.post("/users", db.createUser);
 app.get("/users", db.getAllUsers);
 app.post("/login", db.login);
 app.post("/token", db.token);
-app.delete("/logout", db.logout);
+// app.delete("/logout", db.logout);
 app.post("/products", db.addProduct);
 
 app.get("/products", db.getAllProducts);
