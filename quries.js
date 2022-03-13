@@ -9,6 +9,7 @@ require("dotenv").config();
 import jwt from "jsonwebtoken";
 const Pool = require("pg").Pool;
 
+
 const pool = new Pool({
   user: "postgres",
   host: "localhost",
@@ -55,6 +56,7 @@ const logOut = (req, res) => {
 };
 
 const login = (request, response) => {
+  console.log(request.body);
   const { email, password } = request.body;
   pool.query(
     "SELECT * FROM userInfo where email= $1 and password = $2",
@@ -96,13 +98,31 @@ const login = (request, response) => {
         //   user: results.rows,
         // });
         refreshTokens.push(refreshToken);
-        res.json({ accessToken: accessToken, refreshToken: refreshToken });
+        response.json({ accessToken: accessToken, refreshToken: refreshToken });
       } else {
         response.status(403).json("Incorrect username or password");
       }
     }
   );
 };
+
+async function verifyAccessToken(req, res, next) {
+  try {
+    const authToken = req.headers.authorization;
+    if (!authToken) throw { isError: true, message: "No auth token provided!" };
+
+    const accessToken = authToken.split(" ")[1];
+    if (!accessToken)
+      throw { isError: true, message: "No auth token provided!" };
+
+    const payload = await jwt.verifyAccessToken(accessToken);
+    await checkIfAllowed(payload.aud);
+    req.payload = payload;
+    next();
+  } catch (err) {
+    next(err);
+  }
+}
 
 const createUser = (request, response) => {
   const {
@@ -117,24 +137,44 @@ const createUser = (request, response) => {
     pincode,
   } = request.body;
 
+  //check user
   pool.query(
-    "INSERT INTO userInfo (firstname , lastname , email , phone , address ,state, city,password,pincode ) VALUES ($1, $2, $3, $4, $5, $6,$7,$8,$9)",
-    [
-      firstname,
-      lastname,
-      email,
-      phone,
-      address,
-      state,
-      city,
-      password,
-      pincode,
-    ],
+    "SELECT * FROM userInfo where email=$1",
+    [email],
     (error, results) => {
       if (error) {
         throw error;
       }
-      response.status(201).send(`User added`);
+      console.log(results.rows[0]);
+      if (results.rows.length > 0) {
+        response.status(200).json({ msg: "", err: "Email already exist" });
+      } else {
+        pool.query(
+          "INSERT INTO userInfo (firstname , lastname , email , phone , address ,state, city,password,pincode ) VALUES ($1, $2, $3, $4, $5, $6,$7,$8,$9)",
+          [
+            firstname,
+            lastname,
+            email,
+            phone,
+            address,
+            state,
+            city,
+            password,
+            pincode,
+          ],
+          (error, results) => {
+            if (error) {
+              throw error;
+            }
+            response
+              .status(201)
+              .send({
+                msg: "Account Created sucessfully - Login To Continue",
+                err: "",
+              });
+          }
+        );
+      }
     }
   );
 };
