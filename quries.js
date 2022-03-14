@@ -9,7 +9,6 @@ require("dotenv").config();
 import jwt from "jsonwebtoken";
 const Pool = require("pg").Pool;
 
-
 const pool = new Pool({
   user: "postgres",
   host: "localhost",
@@ -56,7 +55,6 @@ const logOut = (req, res) => {
 };
 
 const login = (request, response) => {
-  console.log(request.body);
   const { email, password } = request.body;
   pool.query(
     "SELECT * FROM userInfo where email= $1 and password = $2",
@@ -145,7 +143,7 @@ const createUser = (request, response) => {
       if (error) {
         throw error;
       }
-      console.log(results.rows[0]);
+
       if (results.rows.length > 0) {
         response.status(200).json({ msg: "", err: "Email already exist" });
       } else {
@@ -166,12 +164,10 @@ const createUser = (request, response) => {
             if (error) {
               throw error;
             }
-            response
-              .status(201)
-              .send({
-                msg: "Account Created sucessfully - Login To Continue",
-                err: "",
-              });
+            response.status(201).send({
+              msg: "Account Created sucessfully - Login To Continue",
+              err: "",
+            });
           }
         );
       }
@@ -197,34 +193,46 @@ const addProduct = async (request, response) => {
     quantity,
   } = request.body;
 
-  console.log(sub_picture);
+ pool.query(
+   "SELECT * FROM productinfo where product_name=$1",[product_name],
+   (error, results) => {
+     if (error) {
+       throw error;
+     }
+     if(results.rows.length>0){
+       response.status(200).json({ msg: "", err: "Product already exist" });
+     }else{
+      pool.query(
+        "INSERT INTO productinfo ( product_name , no_of_stars , no_of_review , editors_notes , good_to_know , is_available , care_instruction , rate , rate2, category,main_pictue, sub_picture,color_picture,quantity) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10,$11,ARRAY[$12],Array[$13],$14)",
+        [
+          product_name,
+          no_of_stars,
+          no_of_review,
+          editors_notes,
+          good_to_know,
+          is_available,
+          care_instruction,
+          rate,
+          rate2,
+          category,
+          main_pictue,
+          sub_picture,
+          color_picture,
+          quantity,
+        ],
+        (error, results) => {
+          if (error) {
+            console.log(error);
+            throw error;
+          }
+          response.status(200).json({ msg: "Product added Succesfully", err: "" });
+        }
+      );
+     }
+   }
+ );
 
-  pool.query(
-    "INSERT INTO productinfo ( product_name , no_of_stars , no_of_review , editors_notes , good_to_know , is_available , care_instruction , rate , rate2, category,main_pictue, sub_picture,color_picture,quantity) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10,$11,ARRAY[$12],Array[$13],$14)",
-    [
-      product_name,
-      no_of_stars,
-      no_of_review,
-      editors_notes,
-      good_to_know,
-      is_available,
-      care_instruction,
-      rate,
-      rate2,
-      category,
-      main_pictue,
-      sub_picture,
-      color_picture,
-      quantity,
-    ],
-    (error, results) => {
-      if (error) {
-        console.log(error);
-        throw error;
-      }
-      response.status(201).send(`Product added`);
-    }
-  );
+  
 };
 const getAllProducts = (request, response) => {
   pool.query("SELECT * FROM productinfo", (error, results) => {
@@ -235,6 +243,53 @@ const getAllProducts = (request, response) => {
   });
 };
 
+const getAllCategory = (request, response) => {
+  pool.query("SELECT * FROM category", (error, results) => {
+    if (error) {
+      throw error;
+    }
+    response.status(200).json(results.rows);
+  });
+};
+const getAllProductsDefinedByCategory = (request, response) => {
+  pool.query("SELECT * FROM category", (error, results) => {
+    if (error) {
+      throw error;
+    }
+    if (results.rows.length > 0) {
+      let cats = [];
+      var finail = [];
+      results.rows.map((e) => {
+        cats.push(e.category);
+      });
+
+      var init = [];
+      cats.map((e) => {
+        console.log(e);
+        var con = pool.query(
+          "SELECT * FROM productinfo WHERE category= $1",
+          [e],
+          (error, results) => {
+            if (error) {
+              throw error;
+            }
+            if (results.rows.length > 0) {
+              let current = results.rows;
+              let obj = {
+                category: e,
+                products: current,
+              };
+              finail.push(obj);
+              if (finail.length === cats.length) {
+                response.status(200).json(finail);
+              }
+            }
+          }
+        );
+      });
+    }
+  });
+};
 const deleteProducts = (request, response) => {
   const { id } = request.body;
   pool.query("DELETE FROM  productinfo WHERE id=$1", [id], (error, results) => {
@@ -263,15 +318,29 @@ const getProductsByCategory = (request, response) => {
 //Category -add
 const createCategory = (request, response) => {
   const { category, description } = request.body;
-  console.log(request.body);
   pool.query(
-    "INSERT INTO category (category,description ) VALUES ($1, $2)",
-    [category, description],
+    "SELECT * FROM category where category= $1",
+    [category.toLowerCase()],
     (error, results) => {
       if (error) {
         throw error;
       }
-      response.status(201).send(`Category added`);
+      if (results.rows.length > 0) {
+        response.status(200).json({ msg: "", err: "Category already exist" });
+      } else {
+        pool.query(
+          "INSERT INTO category (category,description ) VALUES ($1, $2)",
+          [category.toLowerCase(), description],
+          (error, results) => {
+            if (error) {
+              throw error;
+            }
+            response
+              .status(200)
+              .json({ msg: "Category Added Succesfully", err: "" });
+          }
+        );
+      }
     }
   );
 };
@@ -324,4 +393,6 @@ module.exports = {
   login,
   token,
   logOut,
+  getAllCategory,
+  getAllProductsDefinedByCategory,
 };

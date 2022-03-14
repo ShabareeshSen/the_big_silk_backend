@@ -41,7 +41,7 @@ Content-Type: application/json
 GET http://localhost:5000/login
 Content-Type: application/json
 ###
-GET http://localhost:5000/products
+GET http://localhost:5000/productCat
 Content-Type: application/json
 
 ###

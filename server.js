@@ -26,6 +26,8 @@ app.post("/deleteProduct", db.deleteProducts);
 
 app.post("/category", db.createCategory);
 app.post("/promoCode", db.createPromoCode);
+app.get("/category", db.getAllCategory);
+app.get("/productCat", db.getAllProductsDefinedByCategory);
 
 app.listen(port),
   () => {
