@@ -1,10 +1,10 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const db = require("./quries");
-import cors from "cors";
+var cors = require("cors");
 
 const app = express();
-const port = 5000;
+const port = process.env.PORT || 5000;
 app.use(bodyParser.json());
 app.use(cors());
 app.use(
@@ -28,8 +28,10 @@ app.post("/category", db.createCategory);
 app.post("/promoCode", db.createPromoCode);
 app.get("/category", db.getAllCategory);
 app.get("/productCat", db.getAllProductsDefinedByCategory);
+app.post("/productById", db.selectProducts);
+app.post("/addToCart", db.addToCart);
+app.post("/getCart", db.getCartById);
+app.post("/updateCart", db.updateCart);
+//updateCart
 
-app.listen(port),
-  () => {
-    console.log(`Server Started ${port}`);
-  };
+app.listen(port);

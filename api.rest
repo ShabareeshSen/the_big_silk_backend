@@ -15,20 +15,28 @@ Content-Type: application/json
 }
 ###
 
-POST http://localhost:5000/products
+POST https://tyche-backend-api.herokuapp.com/products
 Content-Type: application/json
 
 {
-       "product_name":"vw7",
+       "product_name":"mask89",
        "no_of_stars":4,
        "no_of_review":12,
-       "editors_notes":"checking the notes",
+       "editors_notes":"new mask good to know mask,new mask good to know mask,new mask good to know mask",
        "good_to_know":"good product",
        "is_available": true,
-       "care_instruction":"be careful",
+       "care_instruction":"Handwash at max 30 ℃",
        "rate":1020,
        "rate2":2020,
-       "category": "car"
+       "quantity": "23",
+       "category": "mask",
+       "main_pictue": "https://firebasestorage.googleapis.com/v0/b/thebigsilk.appspot.com/o/images%2Fundefined?alt=media&token=2b253297-9922-48e1-ba34-84360a6a4977",
+       "color_picture": 
+[ "https://firebasestorage.googleapis.com/v0/b/thebigsilk.appspot.com/o/images%2Fundefined?alt=media&token=1d99b4e4-ca92-453b-878c-2ddaebab508c"],
+"sub_picture":
+[
+    "https://firebasestorage.googleapis.com/v0/b/thebigsilk.appspot.com/o/images%2Fundefined?alt=media&token=db505a2b-6850-4f6b-88db-b173f59aeea5"
+]
 }
 ###
 
@@ -38,17 +46,51 @@ Content-Type: application/json
 
 
 
-GET http://localhost:5000/login
-Content-Type: application/json
-###
-GET http://localhost:5000/productCat
-Content-Type: application/json
-
-###
-
-GET http://localhost:5000/productsCategory
+POST http://localhost:5000/productById
 Content-Type: application/json
 
 {
-       "category":"car"
+       "id":"10"
 }
+###
+GET https://tyche-backend-api.herokuapp.com/productCat
+Content-Type: application/json
+
+###
+
+POST  https://tyche-backend-api.herokuapp.com/productById
+Content-Type: application/json
+
+{
+       "id":"2"
+}
+
+###
+POST  https://tyche-backend-api.herokuapp.com/addToCart
+Content-Type: application/json
+
+{
+       "userId":2,
+       "productId":16,
+       "quantity":1
+}
+
+###
+POST  https://tyche-backend-api.herokuapp.com/getCart
+Content-Type: application/json
+
+{
+       "id":2
+}
+
+###
+POST  https://tyche-backend-api.herokuapp.com/updateCart
+Content-Type: application/json
+
+{
+       "userId":2,
+       "productId":13,
+       "quantity":8,
+       "operation":"REMOVE"
+}
+//updateCart
