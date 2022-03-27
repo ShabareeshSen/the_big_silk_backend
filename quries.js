@@ -173,6 +173,58 @@ const createUser = (request, response) => {
     }
   );
 };
+//update user-----------------------update user------------------------------------------------------------------------
+const updateUser = (request, response) => {
+  const {
+    firstname,
+    lastname,
+    phone,
+    address,
+    state,
+    city,
+    pincode,
+    id
+  } = request.body;
+
+  //check user
+  pool.query(
+    "SELECT * from userInfo where id=$1",
+    [id],
+    (error, results) => {
+      if (error) {
+        response.status(200).json({ msg: "", err: error });
+      }
+
+      if (results.rows.length < 0) {
+        response.status(200).json({ msg: "", err: "User not found" });
+      } else {
+        pool.query(
+          "UPDATE userInfo SET firstname=$1,lastname=$2,phone=$3,address=$4,state=$5,city=$6,pincode=$7, where id=$8",
+          [
+            firstname,
+            lastname,
+            phone,
+            address,
+            state,
+            city,
+            pincode,
+            id
+          ],
+          (error, results) => {
+            if (error) {
+              response.status(200).json({ msg: "", err: "Unable to update the user info - please try after some time" });
+            }
+            response.status(201).send({
+              msg: "User updated Succesfully",
+              err: "",
+            });
+          }
+        );
+      }
+    }
+  );
+};
+//---------------------------------------------------------------------------------------------------------------------
 
 const addProduct = async (request, response) => {
   const {
@@ -197,7 +249,7 @@ const addProduct = async (request, response) => {
     [product_name],
     (error, results) => {
       if (error) {
-        console.log(err);
+       response.status(200).json({ msg: "", err: "unable to oad products" });
       }
       if (results.rows.length > 0) {
         response.status(200).json({ msg: "", err: "Product already exist" });
@@ -301,15 +353,79 @@ const getAllProductsDefinedByCategory = (request, response) => {
     }
   });
 };
+// delete product--------------------------delete product-----------------------------------------
+
 const deleteProducts = (request, response) => {
   const { id } = request.body;
   pool.query("DELETE FROM  productinfo WHERE id=$1", [id], (error, results) => {
     if (error) {
-      response.status(200).json({ msg: "", err: error });
+      response.status(200).json({ msg: "", err: "Failed to Delete Products" });
     }
-    response.status(200).json(results.rows);
+    response.status(200).json({ msg: "Product has been deleted Succesfully", err: "" });
   });
 };
+//-----------------------------------------------------------------------------------------------
+
+//update product --------------------------- product update --------------------------------------
+
+const updateProduct = async (request, response) => {
+  const {
+    product_name,
+    no_of_stars,
+    no_of_review,
+    editors_notes,
+    good_to_know,
+    is_available,
+    care_instruction,
+    rate,
+    rate2,
+    category,
+    quantity,
+    id
+  } = request.body;
+  pool.query(
+    "SELECT * FROM productinfo where id=$1",
+    [id],
+    (error, results) => {
+      if (error) {
+         response.status(200).json({ msg: "", err: "unable to oad products" });
+      }
+      if (results.rows.length < 0) {
+        response.status(200).json({ msg: "", err: "Product does not exist" });
+      } else {
+        pool.query(
+         "UPDATE productinfo SET product_name =$1,no_of_stars=$2,no_of_review =$3,editors_notes=$4,good_to_know =$5,is_available=$6 ,care_instruction =$7,rate =$8,rate2=$9,category=$10,quantity=$11 WHERE id=$12"
+         ,[
+            product_name,
+            no_of_stars,
+            no_of_review,
+            editors_notes,
+            good_to_know,
+            is_available,
+            care_instruction,
+            rate,
+            rate2,
+            category,
+            quantity,
+            id
+          ],
+          (error, results) => {
+            if (error) {
+              response
+                .status(200)
+                .json({ msg: "", err: "Unabel to add Product" });
+            }
+            response
+              .status(200)
+              .json({ msg: "Product Updated Succesfully", err: "" });
+          }
+        );
+      }
+    }
+  );
+};
+
+//-------------------------------------------------------------------------------------------------
 
 const selectProducts = (request, response) => {
   const { id } = request.body;
@@ -666,7 +782,7 @@ const updateCart = async (request, response) => {
   //
 };
 
-//getCart
+//getCart-------------------------------------------------------------
 const getCartById = async (request, response) => {
   const { id } = request.body;
   var cart;
@@ -706,6 +822,7 @@ const getCartById = async (request, response) => {
                       amt = amt + val;
                       let obj = {
                         productId: e.productId,
+                        quantity:e.quantity,
                         productDetails: prod,
                         total: val,
                       };
@@ -767,4 +884,6 @@ module.exports = {
   addToCart,
   getCartById,
   updateCart,
+  updateProduct,
+  updateUser,
 };

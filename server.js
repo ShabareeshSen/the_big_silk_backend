@@ -32,6 +32,8 @@ app.post("/productById", db.selectProducts);
 app.post("/addToCart", db.addToCart);
 app.post("/getCart", db.getCartById);
 app.post("/updateCart", db.updateCart);
+app.post("/updateProduct", db.updateProduct);
+app.post("/updateUser", db.updateUser);
 //updateCart
 
 app.listen(port);

@@ -10,7 +10,7 @@ Content-Type: application/json
        "city":"Erode",
        "password":"12345",
        "pincode":3344444,
-       "cart":["iceCream"],
+       "cart":"",
        "ordered":[]
 }
 ###
@@ -62,7 +62,7 @@ POST  https://tyche-backend-api.herokuapp.com/productById
 Content-Type: application/json
 
 {
-       "id":"2"
+       "id":17
 }
 
 ###
@@ -76,7 +76,7 @@ Content-Type: application/json
 }
 
 ###
-POST  https://tyche-backend-api.herokuapp.com/getCart
+POST  http://localhost:5000/getCart
 Content-Type: application/json
 
 {
@@ -89,8 +89,35 @@ Content-Type: application/json
 
 {
        "userId":2,
-       "productId":13,
-       "quantity":8,
-       "operation":"REMOVE"
+       "productId":15,
+       "quantity":2,
+       "operation":"UPDATE_QUANTITY"
 }
 //updateCart
+
+###
+
+POST http://localhost:5000/updateProduct
+Content-Type: application/json
+
+{
+       "id":17,
+       "product_name":"mask80",
+       "no_of_stars":4,
+       "no_of_review":12,
+       "editors_notes":"new mask good to know mask,new mask good to know mask,new mask good to know mask",
+       "good_to_know":"good product",
+       "is_available": true,
+       "care_instruction":"Handwash at max 30 ℃",
+       "rate":1020,
+       "rate2":2020,
+       "quantity": "23",
+       "category": "mask",
+       "main_pictue": "https://firebasestorage.googleapis.com/v0/b/thebigsilk.appspot.com/o/images%2Fundefined?alt=media&token=2b253297-9922-48e1-ba34-84360a6a4977",
+       "color_picture": 
+[ "https://firebasestorage.googleapis.com/v0/b/thebigsilk.appspot.com/o/images%2Fundefined?alt=media&token=1d99b4e4-ca92-453b-878c-2ddaebab508c"],
+"sub_picture":
+[
+    "https://firebasestorage.googleapis.com/v0/b/thebigsilk.appspot.com/o/images%2Fundefined?alt=media&token=db505a2b-6850-4f6b-88db-b173f59aeea5"
+]
+}
